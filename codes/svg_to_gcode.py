@@ -3,7 +3,7 @@ import svgpathtools
 import sys
 
 
-def svg_to_safe_curved_gcode(svg_file_path, gcode_file_path):
+def create_gcode(svg_file_path, gcode_file_path):
     # 读取SVG
     paths, attributes = svgpathtools.svg2paths(svg_file_path)
     gcode_lines = []

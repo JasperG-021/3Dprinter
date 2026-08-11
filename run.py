@@ -1,8 +1,8 @@
 import datetime
-from main.svg_to_gcode import svg_to_safe_curved_gcode
+from codes.svg_to_gcode import create_gcode
 
 file_date = str(datetime.datetime.today()).split()[0].replace('-', '')
-svg_file = "resources/test_20260727.svg"
+svg_file = "resources/for_test.svg"
 gcode_file = "gcode_result/test_"+file_date+".gcode"
 # print(gcode_file)
-svg_to_safe_curved_gcode(svg_file, gcode_file)
+create_gcode(svg_file, gcode_file)
