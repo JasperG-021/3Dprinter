@@ -72,7 +72,7 @@ def create_gcode(svg_file_path, gcode_file_path):
                     gcode_lines.append(f"G1 X{printer_x:.3f} Y{printer_y:.3f} Z{pen_down_z} F{draw_speed}") # 绘制线条
 
     gcode_lines.append(f"G0 Z{pen_up_z} F{travel_speed};")                      # 结束抬笔
-    gcode_lines.append(f"G0 X10 Y170 Z{pen_up_z} F{travel_speed};")     # 回到安全位置
+    gcode_lines.append(f"G0 X10 Y170 Z{pen_up_z} F{travel_speed};")             # 回到安全位置，XY暂时写死
     gcode_lines.append("M2;")                                                   # 结束
 
     # 保存文件
