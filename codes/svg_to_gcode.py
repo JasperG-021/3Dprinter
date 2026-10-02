@@ -1,25 +1,27 @@
 
-import svgpathtools
 import sys
+import svgpathtools
 
 
 def create_gcode(svg_file_path, gcode_file_path):
     # 用来存储 G-code 的每一行
     gcode_lines = []
 
-    # 定义边界
-    X_MIN, X_MAX = 36.0, 129.0
-    Y_MIN, Y_MAX = 50.0, 143.0
+    # 定义图案边界
+    X_MIN, X_MAX = 35.0, 128.0
+    Y_MIN, Y_MAX = 55.0, 147.0
+
+    travel_speed = 3000     # 空移速度 (mm/min)
+    draw_speed = 500       # 画线速度 (mm/min)
+    pen_down_z = 0.0        # 落笔高度
+    pen_up_z = 3.0         # 抬笔高度
+    safe_z = 40.0           # 避障高度
 
     # 初始化打印机
     gcode_lines.append("G21;") #毫米单位
     gcode_lines.append("G90;") #绝对坐标
-    gcode_lines.append("G0 Z10.0 F3000;") #抬笔
+    gcode_lines.append(f"G0 Z{safe_z} F1500") #抬笔
 
-    travel_speed = 3000     # 空移速度 (mm/min)
-    draw_speed = 1200       # 画线速度 (mm/min)
-    pen_down_z = 3.0        # 落笔高度
-    pen_up_z = 10.0         # 抬笔高度
 
     # 读取SVG
     paths, attributes = svgpathtools.svg2paths(svg_file_path)
@@ -65,14 +67,16 @@ def create_gcode(svg_file_path, gcode_file_path):
                 # 写入坐标
                 # :.3f 保留 3 位小数
                 if is_path_start:   # 如果是路径的起点，先抬笔移动到起点，再落笔开始绘制
-                    gcode_lines.append(f"G0 X{printer_x:.3f} Y{printer_y:.3f} Z{pen_up_z} F{travel_speed}")
-                    gcode_lines.append(f"G1 Z{pen_down_z} F500")
+                    gcode_lines.append(f"G0 Z{safe_z} F1500")
+                    gcode_lines.append(f"G0 X{printer_x:.3f} Y{printer_y:.3f} F{travel_speed}")
+                    gcode_lines.append(f"G0 Z{pen_up_z} F1000")
+                    gcode_lines.append(f"G1 Z{pen_down_z} F300")
                     is_path_start = False
                 else:
                     gcode_lines.append(f"G1 X{printer_x:.3f} Y{printer_y:.3f} Z{pen_down_z} F{draw_speed}") # 绘制线条
 
-    gcode_lines.append(f"G0 Z{pen_up_z} F{travel_speed};")                      # 结束抬笔
-    gcode_lines.append(f"G0 X10 Y170 Z{pen_up_z} F{travel_speed};")             # 回到安全位置，XY暂时写死
+    gcode_lines.append(f"G0 Z{safe_z} F{travel_speed};")                      # 结束抬笔
+    gcode_lines.append(f"G0 X10 Y170 F{travel_speed};")                         # 回到安全位置
     gcode_lines.append("M2;")                                                   # 结束
 
     # 保存文件

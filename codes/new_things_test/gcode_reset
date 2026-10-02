@@ -1,0 +1,66 @@
+import re
+import numpy as np
+
+config_file = "/mnt/c/Users/kakuy/Downloads/printer.cfg"  # 你的 printer.cfg 路径
+
+# 1. 读取配置文件
+with open(config_file, "r", encoding="utf-8") as f:
+    text = f.read()
+
+# 2. 正则提取 points 网格数据和参数
+points_match = re.search(r"#\*# points =\n((?:#\*#\s+[-0-9.,\s]+\n)+)", text)
+if not points_match:
+    raise ValueError("未在 printer.cfg 底部找到 [bed_mesh] 的 points 数据！")
+
+raw_points_block = points_match.group(1)
+# 解析为浮点数矩阵 (Ny 行, Nx 列)
+grid = []
+for line in raw_points_block.strip().split("\n"):
+    clean_line = line.replace("#*#", "").strip()
+    if clean_line:
+        grid.append([float(x.strip()) for x in clean_line.split(",") if x.strip()])
+
+Z_old = np.array(grid)
+Ny, Nx = Z_old.shape
+print(f"检测到网格维度: {Ny} 行 x {Nx} 列")
+
+# 3. 执行双线性倾斜消除与高度映射
+Z_new = np.zeros_like(Z_old)
+for i in range(Ny):
+    for j in range(Nx):
+        u = j / (Nx - 1) if Nx > 1 else 0.0
+        v = i / (Ny - 1) if Ny > 1 else 0.0
+        
+        # 沿对角线的倾斜基准参考面
+        z_base = 76.491 * (1 - (u + v) / 2.0) + 75.721 * ((u + v) / 2.0)
+        
+        # 真实起伏叠加到 58.0mm 基准上
+        Z_new[i, j] = Z_old[i, j] - z_base + 58.0
+
+# 4. 格式化生成新的 points 文本块
+new_points_lines = ["#*# points ="]
+for row in Z_new:
+    row_str = ", ".join([f"{val:.6f}" for val in row])
+    new_points_lines.append(f"#*# \t  {row_str}")
+new_points_block = "\n".join(new_points_lines) + "\n"
+
+# 5. 替换配置文件中的 points 和边界参数
+new_text = re.sub(
+    r"#\*# points =\n(?:#\*#\s+[-0-9.,\s]+\n)+",
+    new_points_block,
+    text
+)
+# 更新 XY 边界范围
+new_text = re.sub(r"(#\*# mesh_x_min = ).*", r"\g<1>26.0", new_text)
+new_text = re.sub(r"(#\*# mesh_x_max = ).*", r"\g<1>120.0", new_text)
+new_text = re.sub(r"(#\*# mesh_y_min = ).*", r"\g<1>30.0", new_text)
+new_text = re.sub(r"(#\*# mesh_y_max = ).*", r"\g<1>125.0", new_text)
+
+# 6. 保存写回
+with open("printer.cfg", "w", encoding="utf-8") as f:
+    f.write(new_text)
+
+print("✅ printer.cfg 数据重算完成！")
+print("  - X 范围已更新为: [26.0, 120.0]")
+print("  - Y 范围已更新为: [30.0, 125.0]")
+print("  - Z 高度基准已消除倾角并整体校准至 58.0 mm")
