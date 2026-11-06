@@ -8,8 +8,8 @@ def create_gcode(svg_file_path, gcode_file_path):
     gcode_lines = []
 
     # 定义图案边界
-    X_MIN, X_MAX = 35.0, 128.0
-    Y_MIN, Y_MAX = 55.0, 147.0
+    X_MIN, X_MAX = 36.0, 130.0
+    Y_MIN, Y_MAX = 46.0, 139.0
 
     travel_speed = 3000     # 空移速度 (mm/min)
     draw_speed = 500       # 画线速度 (mm/min)

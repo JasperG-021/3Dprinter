@@ -1,0 +1,113 @@
+POINT_ID=0 ; 标记当前点序号
+00:30
+probe: at 63.000,101.500 bed will contact at z=51.718750
+00:30
+probe: at 63.000,101.500 bed will contact at z=51.760000
+00:30
+Result: at 63.000,101.500 estimate contact at z=51.739375
+00:30
+POINT_ID=1 ; 标记当前点序号
+00:30
+probe: at 65.844,101.500 bed will contact at z=50.715000
+00:30
+probe: at 65.844,101.500 bed will contact at z=50.708750
+00:30
+Result: at 65.844,101.500 estimate contact at z=50.711875
+00:30
+POINT_ID=2 ; 标记当前点序号
+00:30
+probe: at 68.694,101.500 bed will contact at z=49.883750
+00:30
+probe: at 68.694,101.500 bed will contact at z=49.886250
+00:30
+Result: at 68.694,101.500 estimate contact at z=49.885000
+00:30
+POINT_ID=3 ; 标记当前点序号
+00:30
+probe: at 71.537,101.500 bed will contact at z=49.228750
+00:30
+probe: at 71.537,101.500 bed will contact at z=49.230000
+00:30
+Result: at 71.537,101.500 estimate contact at z=49.229375
+00:30
+POINT_ID=4 ; 标记当前点序号
+00:31
+probe: at 74.387,101.500 bed will contact at z=48.693750
+00:31
+probe: at 74.387,101.500 bed will contact at z=48.698750
+00:31
+Result: at 74.387,101.500 estimate contact at z=48.696250
+00:31
+POINT_ID=5 ; 标记当前点序号
+00:31
+probe: at 77.231,101.500 bed will contact at z=48.356250
+00:31
+probe: at 77.231,101.500 bed will contact at z=48.355000
+00:31
+Result: at 77.231,101.500 estimate contact at z=48.355625
+00:31
+POINT_ID=6 ; 标记当前点序号
+00:31
+probe: at 80.075,101.500 bed will contact at z=48.167500
+00:31
+probe: at 80.075,101.500 bed will contact at z=48.167500
+00:31
+Result: at 80.075,101.500 estimate contact at z=48.167500
+00:31
+POINT_ID=7 ; 标记当前点序号
+00:31
+probe: at 82.925,101.500 bed will contact at z=48.043750
+00:31
+probe: at 82.925,101.500 bed will contact at z=48.057500
+00:31
+Result: at 82.925,101.500 estimate contact at z=48.050625
+00:31
+POINT_ID=8 ; 标记当前点序号
+00:31
+probe: at 85.769,101.500 bed will contact at z=47.963750
+00:31
+probe: at 85.769,101.500 bed will contact at z=47.967500
+00:31
+Result: at 85.769,101.500 estimate contact at z=47.965625
+00:31
+POINT_ID=9 ; 标记当前点序号
+00:31
+probe: at 88.612,101.500 bed will contact at z=47.871250
+00:31
+probe: at 88.612,101.500 bed will contact at z=47.872500
+00:31
+Result: at 88.612,101.500 estimate contact at z=47.871875
+00:31
+POINT_ID=10 ; 标记当前点序号
+00:31
+probe: at 91.462,101.500 bed will contact at z=47.805000
+00:31
+probe: at 91.462,101.500 bed will contact at z=47.807500
+00:31
+Result: at 91.462,101.500 estimate contact at z=47.806250
+00:31
+POINT_ID=11 ; 标记当前点序号
+00:31
+probe: at 94.306,101.500 bed will contact at z=47.718750
+00:31
+probe: at 94.306,101.500 bed will contact at z=47.711250
+00:31
+Result: at 94.306,101.500 estimate contact at z=47.715000
+00:31
+POINT_ID=12 ; 标记当前点序号
+00:32
+probe: at 97.156,101.500 bed will contact at z=47.642500
+00:32
+probe: at 97.156,101.500 bed will contact at z=47.647500
+00:32
+Result: at 97.156,101.500 estimate contact at z=47.645000
+00:32
+POINT_ID=13 ; 标记当前点序号
+00:32
+probe: at 100.000,101.500 bed will contact at z=47.620000
+00:32
+probe: at 100.000,101.500 bed will contact at z=47.646250
+00:32
+Result: at 100.000,101.500 estimate contact at z=47.633125
+00:32
+Done printing file
