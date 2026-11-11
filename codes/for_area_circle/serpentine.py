@@ -1,23 +1,24 @@
-"""生成一笔画蛇形（弓字形）G-code，直线之间用相切半圆连接。"""
+"""生成一笔画蛇形（弓字形）G-code，相邻行之间以 90 度直角折返连接。"""
 
 import math
 
-x_min = 35.0
-y_min = 49.0
-x_max = 123.0
-y_max = 139.0
+x_min = 40.0             # 热床左下角 X 坐标 (mm)
+y_min = 40.0             # 热床左下角 Y 坐标 (mm)
+x_max = 133.0            # 热床右上角 X 坐标 (mm)
+y_max = 135.0            # 热床右上角 Y 坐标 (mm)
 
+safe_z=90.0        # 全局避障高度 (mm)
+
+output_file="serpentine_heater_test_concave.gcode"
 
 def generate_serpentine_gcode(
-    output_file="serpentine_heater_test.gcode",
     center_x=(x_min + x_max) / 2.0,  # 不含引线的蛇形主体中心 X (mm)
     center_y=(y_min + y_max) / 2.0,  # 不含引线的蛇形主体中心 Y (mm)
     spacing_d=2.0,       # 相邻平行直线的中心间距 (mm)
-    trace_width=50.0,    # 每行直线段长度 (mm)，两侧半圆额外各占 d/2
-    rows=12,            # 平行直线数量；偶数时两端在同侧，奇数时在相对两侧
-    step_length=1.0,    # 最大采样步长 (mm)，圆弧额外加密
+    trace_width=50.0,    # 每行直线段长度，即旋转前的主体宽度 (mm)
+    rows=16,            # 平行直线数量；偶数时两端在同侧，奇数时在相对两侧
+    step_length=1.0,    # 最大采样步长 (mm)，各直角顶点均保留
     lead_length=8.0,    # 首尾各自向主体外侧延伸的引线长度 (mm)
-    safe_z=50.0,        # 全局避障高度 (mm)
     pen_up_z=5.0,       # 局部提笔高度 (mm)
     pen_down_z=-0.5,    # 落笔高度 (mm)，实画时按实际笔尖高度调整
     travel_speed=3000,  # 空移速度 (mm/min)
@@ -44,7 +45,6 @@ def generate_serpentine_gcode(
 
     half_width = trace_width / 2.0
     half_height = (rows - 1) * spacing_d / 2.0
-    arc_radius = spacing_d / 2.0
     local_points = [(-half_width - lead_length, -half_height)]
 
     def add_line(end):
@@ -59,7 +59,6 @@ def generate_serpentine_gcode(
                                  start[1] + (end[1] - start[1]) * t))
 
     add_line((-half_width, -half_height))
-    arc_steps = max(16, math.ceil(math.pi * arc_radius / (step_length * 0.5)))
     for row in range(rows):
         y = -half_height + row * spacing_d
         direction = 1 if row % 2 == 0 else -1
@@ -68,11 +67,8 @@ def generate_serpentine_gcode(
         if row == rows - 1:
             add_line((end_x + direction * lead_length, y))
             break
-        # 右端向右鼓出，左端向左鼓出；首尾切线均与直线一致。
-        for i in range(1, arc_steps + 1):
-            angle = math.pi * i / arc_steps
-            local_points.append((end_x + direction * arc_radius * math.sin(angle),
-                                 y + arc_radius * (1.0 - math.cos(angle))))
+        # 保留端点，垂直连接下一行，形成两个 90 度直角。
+        add_line((end_x, y + spacing_d))
 
     angle = math.radians(rotation_deg)
     cos_a, sin_a = math.cos(angle), math.sin(angle)
@@ -84,7 +80,7 @@ def generate_serpentine_gcode(
     print("蛇形折返加热图案生成完毕！")
     print(f"  - 中心坐标: ({center_x}, {center_y}) mm；旋转: {rotation_deg} 度")
     print(f"  - 直线段: {rows} 行，每行 {trace_width} mm；行间距: {spacing_d} mm")
-    print(f"  - 折返半圆半径: {arc_radius} mm；主体高度: {2 * half_height} mm")
+    print(f"  - 折返方式: 90 度直角；主体高度: {2 * half_height} mm")
     print(f"  - 实际 XY 坐标范围: X[{min(xs):.1f} ~ {max(xs):.1f}], Y[{min(ys):.1f} ~ {max(ys):.1f}]")
     print(f"  - 导电迹线总长度 (L): {total_trace_length:.1f} mm ({total_trace_length/10:.1f} cm)")
     print(f"  - 离散坐标点总数: {len(path_points)} 个")
@@ -93,6 +89,7 @@ def generate_serpentine_gcode(
     # 5. 输出 G-code 文件
     gcode = [
         "; === Serpentine Heater G-code ===",
+        "; Turn Style = 90-degree corners",
         f"; Center=({center_x},{center_y}), Spacing={spacing_d}mm, Rows={rows}",
         f"; Straight Width={trace_width}mm, Rotation={rotation_deg}deg",
         f"; Total Trace Length = {total_trace_length:.2f} mm",

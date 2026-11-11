@@ -1,12 +1,14 @@
 import math
 
-x_min = 35.0             # 热床左下角 X 坐标 (mm)
-y_min = 49.0             # 热床左下角 Y 坐标 (mm)
-x_max = 123.0            # 热床右上角 X 坐标 (mm)
-y_max = 139.0            # 热床右上角 Y 坐标 (mm)
+x_min = 40.0             # 热床左下角 X 坐标 (mm)
+y_min = 40.0             # 热床左下角 Y 坐标 (mm)
+x_max = 133.0            # 热床右上角 X 坐标 (mm)
+y_max = 135.0            # 热床右上角 Y 坐标 (mm)
 
+output_file="bifilar_heater_test_concave.gcode"
+
+safe_z=90.0          # 进退场避障安全高度 (mm)
 def generate_bifilar_spiral_gcode(
-    output_file="bifilar_heater_test.gcode",
     center_x=(x_min + x_max) / 2.0,       # 线圈中心在热床上的 X 坐标 (mm)
     center_y=(y_min + y_max) / 2.0,       # 线圈中心在热床上的 Y 坐标 (mm)
     spacing_d=2.0,        # 相邻两根线的中心间距 d (mm) = 笔宽 + 安全间隙
@@ -14,7 +16,6 @@ def generate_bifilar_spiral_gcode(
     step_length=1.0,      # 离散步长 (mm)：每 1mm 生成一个 G1 点，适配曲面与匀速
     lead_length=8.0,      # 最外圈正负极引出脚的长度 (mm)，方便夹鳄鱼夹
     # --- 打印机高度与速度参数 ---
-    safe_z=50.0,          # 进退场避障安全高度 (mm)
     pen_up_z=5.0,         # 局部提笔高度 (mm)
     pen_down_z=-0.5,       # 落笔高度 (mm) -> ⚠️ 首次测试设为 +2.0 悬空观察，实画改为 0.0 或 -2.0
     travel_speed=3000,    # 空移速度 (mm/min)
